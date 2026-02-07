@@ -1,0 +1,52 @@
+version: 'version'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    volumes:
+      - inventario-cheio-db:/etc/data
+    networks:
+      - inventario-cheio
+  pg:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - '${PGADMIN_PORT}:80'
+    depends_on:
+      - postgres
+    networks:
+      - inventario-cheio
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inventario-cheio
+    ports:
+      - '${PORT}:${PORT}'
+    networks:
+      - inventario-cheio
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: ${DB_PORT}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE}
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+
+networks:
+  inventario-cheio:
+
+volumes:
+  inventario-cheio-db:
