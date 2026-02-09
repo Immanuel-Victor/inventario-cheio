@@ -5,16 +5,16 @@
 1. Descrição
 2. Tecnologias
 3. Documentação
-  3.1 Recursos da Api
-  3.2 Rotas Públicas
-  3.3 Rotas de Administrador
-  3.4 Swagger
+   3.1 Recursos da Api
+   3.2 Rotas Públicas
+   3.3 Rotas de Administrador
+   3.4 Swagger UI
 4. Licença
 5. Autor
 
 ## Descrição
 
-"Inventário Cheio"  é um simples sistema de gerenciamento de items para Sistemas de RPG de mesa. O objetivo do sistema é gerar uma enciclopédia de recursos de RPG, para diferentes comunidades serem capazes de usarem da forma que precisam.
+"Inventário Cheio" é um simples sistema de gerenciamento de items para Sistemas de RPG de mesa. O objetivo do sistema é gerar uma enciclopédia de recursos de RPG, para diferentes comunidades serem capazes de usarem da forma que precisam.
 
 ## Tecnologias
 
@@ -51,6 +51,16 @@ Rotas públicas, usadas para buscar informações acerca dos itens de um RPG
 
 Rotas usadas para modificar e resgatar informações diretamente dos itens registradas na aplicação. Para utilizar essa rota, você precisa de um Bearer Token com permissões corretas.
 
+##### RPG's
+
+| Method | Route        |
+| ------ | ------------ |
+| POST   | /api/rpg     |
+| PATCH  | /api/rpg/:id |
+| DELETE | /api/rpg/:id |
+
+##### Items
+
 | Method | Route          |
 | ------ | -------------- |
 | GET    | /api/items     |
@@ -59,10 +69,11 @@ Rotas usadas para modificar e resgatar informações diretamente dos itens regis
 | PATCH  | /api/items/:id |
 | DELETE | /api/items/:id |
 
-#### Swagger
+#### Swagger UI
 
 Rotas e recursos do sistema também acessíveis via Swagger
-(WIP)
+**Podem ser encontradas ao acessar:**
+http://localhost:<porta>/api
 
 ## Licença
 

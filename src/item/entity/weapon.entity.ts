@@ -3,23 +3,23 @@ import { ChildEntity, Column } from 'typeorm';
 
 @ChildEntity()
 export class Weapon extends Item {
-  @Column()
-  damageScore: number;
+  @Column({ nullable: true })
+  damageScore: string;
 
-  @Column()
+  @Column({ nullable: true })
   reach: number;
 
-  @Column()
-  criticalThreshold: string;
+  @Column({ nullable: true })
+  critThreshold: string;
 
-  @Column()
-  criticalMultiplier: number;
+  @Column({ nullable: true })
+  critMultiplier: number;
 
-  @Column()
+  @Column({ nullable: true })
   damageType: string;
 
-  @Column()
-  neededProficiency: string;
+  @Column({ nullable: true })
+  neededWeaponProficiency: string;
 
   getItemInfo() {}
 }

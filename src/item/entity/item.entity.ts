@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   TableInheritance,
 } from 'typeorm';
+import { ItemCategory } from '../enum/item-category.enum';
 
 @Entity()
 @TableInheritance({ column: { type: 'varchar', name: 'category' } })
@@ -21,7 +22,7 @@ export class Item {
   description: string;
 
   @Column()
-  category: string;
+  category: ItemCategory;
 
   @Column()
   price: number;

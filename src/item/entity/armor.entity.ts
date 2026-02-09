@@ -3,16 +3,16 @@ import { Item } from './item.entity';
 
 @ChildEntity()
 export class Armor extends Item {
-  @Column()
+  @Column({ nullable: true })
   protectionScore: number;
 
-  @Column()
+  @Column({ nullable: true })
   neededArmorProficiency: string;
 
-  @Column()
+  @Column({ nullable: true })
   movementPenalty: number;
 
-  @Column()
+  @Column({ nullable: true })
   armorCategory: string;
 
   getItemInfo() {}

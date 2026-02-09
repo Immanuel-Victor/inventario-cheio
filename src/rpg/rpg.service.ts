@@ -36,14 +36,20 @@ export class RpgService {
 
   async updateRpgInfo() {}
 
-  async getRpgItems(id: string) {
+  async getRpgItems(id: string, paginationQuery?: QueryPaginationDto) {
     console.log(id);
     const items = await this.itemRepository.find({
       where: {
         rpgId: id,
       },
     });
-    return items;
+
+    const paginatedData = this.paginationService.returnPaginatedData<Item>(
+      items,
+      paginationQuery,
+    );
+
+    return paginatedData;
   }
 
   async getRpgItemInfo(id: string, itemId: string) {
