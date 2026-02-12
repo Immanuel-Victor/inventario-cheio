@@ -7,7 +7,7 @@ import { Item } from './entity/item.entity';
 
 @Injectable()
 export class ItemFactory {
-  create(createItemDto: CreateItemDto) {
+  create(createItemDto: CreateItemDto): Item {
     switch (createItemDto.category) {
       case ItemCategory.ARMOR: {
         const newArmor = new Armor();
