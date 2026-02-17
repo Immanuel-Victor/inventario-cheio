@@ -5,6 +5,7 @@ import { PaginationService } from 'src/common/pagination/pagination.service';
 import { Rpg } from './entities/rpg.entity';
 import { Repository } from 'typeorm';
 import { Item } from 'src/item/entity/item.entity';
+import { PaginatedDataDto } from 'src/common/pagination/dto/paginated-data.dto';
 
 @Injectable()
 export class RpgService {
@@ -36,8 +37,12 @@ export class RpgService {
 
   async updateRpgInfo() {}
 
-  async getRpgItems(id: string, paginationQuery?: QueryPaginationDto) {
-    console.log(id);
+  async deleteRpgInfo() {}
+
+  async getRpgItems(
+    id: string,
+    paginationQuery?: QueryPaginationDto,
+  ): Promise<PaginatedDataDto<Item>> {
     const items = await this.itemRepository.find({
       where: {
         rpgId: id,

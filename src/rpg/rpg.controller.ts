@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { QueryPaginationDto } from 'src/common/pagination/dto/query_pagination.dto';
 import { RpgService } from './rpg.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
@@ -38,7 +38,12 @@ export class RpgController {
   }
 
   @Patch(':id')
-  updateRpgSystym() {
+  updateRpgSystem() {
     return this.rpgService.updateRpgInfo();
+  }
+
+  @Delete(':id')
+  deleteRpgSystem() {
+    return this.rpgService.deleteRpgInfo();
   }
 }

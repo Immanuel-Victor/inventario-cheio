@@ -7,8 +7,10 @@ import { QueryPaginationDto } from 'src/common/pagination/dto/query_pagination.d
 import { PaginatedDataDto } from 'src/common/pagination/dto/paginated-data.dto';
 import { jest } from '@jest/globals';
 import { Item } from 'src/item/entity/item.entity';
+import { ItemCategory } from 'src/item/enum/item-category.enum';
+import { ItemResponseDto } from 'src/item/dto/item-response.dto';
 
-export class rpgRepositoryMock {
+class rpgRepositoryMock {
   findOne = jest.fn() as jest.MockedFunction<
     (id: string) => Promise<Rpg | null>
   >;
@@ -16,7 +18,7 @@ export class rpgRepositoryMock {
   save = jest.fn() as jest.MockedFunction<(rpg: Rpg) => Promise<Rpg>>;
 }
 
-export class itemRepositoryMock {
+class itemRepositoryMock {
   find = jest.fn() as jest.MockedFunction<() => Promise<Item[]>>;
   findOne = jest.fn() as jest.MockedFunction<
     (id: string) => Promise<Item | null>
@@ -134,7 +136,7 @@ describe('RpgService', () => {
 
   it('Should return an empty data array when no information is found', async () => {
     const mockedResult: PaginatedDataDto<Rpg> = {
-      totalItems: 2,
+      totalItems: 0,
       data: [],
       limit: 10,
       offset: 0,
@@ -182,20 +184,92 @@ describe('RpgService', () => {
     );
   });
 
-  it('Should return a list of all items in an Rpg', async () => {});
+  it('Should return a list of all items in an Rpg', async () => {
+    const rpgId = 'e0510a77-1872-48ed-8f39-31b333ff4f3c';
+    const mockItems: Item[] = [
+      {
+        id: 'b8d02fac-366d-47ff-94ff-f82ec39002d5',
+        name: 'item 1',
+        description: 'descrição do item 1',
+        category: ItemCategory.FOOD,
+        price: 123,
+        weight: 2,
+        rpgId: rpgId,
+      },
+      {
+        id: 'b8d02fac-366d-47ff-94ff-f82ec39002d5',
+        name: 'item 2',
+        description: 'descrição do item 2',
+        category: ItemCategory.CLOTHING,
+        price: 123,
+        weight: 1,
+        rpgId: rpgId,
+      },
+    ];
+    const mockedResult: PaginatedDataDto<ItemResponseDto> = {
+      totalItems: 2,
+      data: mockItems,
+      limit: 10,
+      offset: 0,
+      hasNext: false,
+    };
+
+    itemRepository.find.mockResolvedValue(mockItems);
+    mockPaginationService.returnPaginatedData.mockReturnValueOnce(mockedResult);
+
+    const items = await rpgService.getRpgItems(rpgId);
+
+    expect(items).toEqual(mockedResult);
+  });
 
   it('Should return an empty list when there are no items in an Rpg', async () => {
+    const mockedResult: PaginatedDataDto<Item> = {
+      totalItems: 0,
+      data: [],
+      limit: 10,
+      offset: 0,
+      hasNext: false,
+    };
     const rpgId = 'e0510a77-1872-48ed-8f39-31b333ff4f3c';
     const mockItems: Item[] = [];
 
     itemRepository.find.mockResolvedValue(mockItems);
+    mockPaginationService.returnPaginatedData.mockReturnValueOnce(mockedResult);
 
     const items = await rpgService.getRpgItems(rpgId);
 
-    expect(items).toEqual(mockItems);
+    expect(items).toEqual(mockedResult);
   });
 
-  it('Should return all of the public information of an item from an Rpg', () => {});
+  it('Should return all of the public information of an item from an Rpg', async () => {
+    const rpgId = 'e0510a77-1872-48ed-8f39-31b333ff4f3c';
+    const itemId = 'b8d02fac-366d-12321-94ff-f82ec39002d5';
+    const item = {
+      id: itemId,
+      name: 'item 2',
+      description: 'descrição do item 2',
+      category: ItemCategory.CLOTHING,
+      price: 123,
+      weight: 1,
+      rpgId: rpgId,
+    };
+
+    itemRepository.findOne.mockResolvedValue(item);
+
+    const foundItem = await rpgService.getRpgItemInfo(rpgId, itemId);
+
+    expect(foundItem).toEqual(item);
+  });
+
+  it('Should throw a NotFoundException when an item is not found', async () => {
+    const rpgId = 'e0510a77-1872-48ed-8f39-31b333ff4f3c';
+    const itemId = 'b8d02fac-366d-47ff-94ff-f82ec39002d5';
+    itemRepository.findOne.mockResolvedValueOnce(null);
+
+    await expect(rpgService.getRpgItemInfo(rpgId, itemId)).rejects.toThrow(
+      'Item not found',
+    );
+  });
 
   it('Should create an Rpg', () => {});
 
