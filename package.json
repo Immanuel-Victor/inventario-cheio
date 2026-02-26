@@ -73,7 +73,9 @@
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}"
+      "**/*.{js,jsx,ts,tsx}",
+      "!**/*.spec.ts",
+      "!**/*.d.ts"
     ],
     "coverageDirectory": "../coverage",
     "coverageReporters": [

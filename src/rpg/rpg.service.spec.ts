@@ -9,6 +9,7 @@ import { jest } from '@jest/globals';
 import { Item } from 'src/item/entity/item.entity';
 import { ItemCategory } from 'src/item/enum/item-category.enum';
 import { ItemResponseDto } from 'src/item/dto/item-response.dto';
+import { CreateRpgDto } from './dto/create-rpg.dto';
 
 class rpgRepositoryMock {
   findOne = jest.fn() as jest.MockedFunction<
@@ -16,6 +17,10 @@ class rpgRepositoryMock {
   >;
   find = jest.fn() as jest.MockedFunction<() => Promise<Rpg[]>>;
   save = jest.fn() as jest.MockedFunction<(rpg: Rpg) => Promise<Rpg>>;
+  delete = jest.fn() as jest.MockedFunction<(id: string) => Promise<void>>;
+  update = jest.fn() as jest.MockedFunction<
+    (id: string, rpg: Rpg) => Promise<Rpg>
+  >;
 }
 
 class itemRepositoryMock {
@@ -83,7 +88,7 @@ describe('RpgService', () => {
           id: 'e0510a77-1872-48ed-8f39-31b333ff4f3c',
           name: 'rpg1',
           description: 'descrição do rpg1',
-          launchYear: '1998',
+          launchYear: 1998,
           publisher: 'editora1',
           author: 'autor1',
         },
@@ -91,7 +96,7 @@ describe('RpgService', () => {
           id: '6bb01647-d559-460a-bbda-1a84cb2bc8d9',
           name: 'rpg2',
           description: 'descrição do rpg2',
-          launchYear: '1998',
+          launchYear: 1998,
           publisher: 'editora1',
           author: 'autor1',
         },
@@ -105,7 +110,7 @@ describe('RpgService', () => {
         id: 'e0510a77-1872-48ed-8f39-31b333ff4f3c',
         name: 'rpg1',
         description: 'descrição do rpg1',
-        launchYear: '1998',
+        launchYear: 1998,
         publisher: 'editora1',
         author: 'autor1',
       },
@@ -113,7 +118,7 @@ describe('RpgService', () => {
         id: '6bb01647-d559-460a-bbda-1a84cb2bc8d9',
         name: 'rpg2',
         description: 'descrição do rpg2',
-        launchYear: '1998',
+        launchYear: 1998,
         publisher: 'editora1',
         author: 'autor1',
       },
@@ -162,7 +167,7 @@ describe('RpgService', () => {
       id: 'e0510a77-1872-48ed-8f39-31b333ff4f3c',
       name: 'rpg1',
       description: 'descrição do rpg1',
-      launchYear: '1998',
+      launchYear: 1998,
       publisher: 'editora1',
       author: 'autor1',
     };
@@ -271,9 +276,86 @@ describe('RpgService', () => {
     );
   });
 
-  it('Should create an Rpg', () => {});
+  it('Should create an Rpg', async () => {
+    const rpgData: CreateRpgDto = {
+      author: 'autor1',
+      description: 'descrição do rpg1',
+      launchYear: 1998,
+      name: 'rpg1',
+      publisher: 'editora1',
+    };
 
-  it('Should update an Rpg information', () => {});
+    rpgRepository.save.mockImplementationOnce(async (rpg: Rpg) => {
+      return {
+        ...rpg,
+        id: 'e0510a77-1872-48ed-8f39-31b333ff4f3c',
+      };
+    });
 
-  it('Should delete an Rpg', () => {});
+    const createdRpg = await rpgService.createRpg(rpgData);
+    expect(rpgRepository.save).toHaveBeenCalledTimes(1);
+    expect(rpgRepository.save).toHaveBeenCalledWith(rpgData);
+    expect(createdRpg.id).toEqual('e0510a77-1872-48ed-8f39-31b333ff4f3c');
+  });
+
+  it('Should update an Rpg information', async () => {
+    const rpgId = 'e0510a77-1872-48ed-8f39-31b333ff4f3c';
+    const existingRpg: Rpg = {
+      id: rpgId,
+      author: 'autor1',
+      name: 'rpg1',
+      description: 'descrição do rpg1',
+      launchYear: 1998,
+      publisher: 'editora1',
+    };
+
+    const dataToUpdate = {
+      name: 'rpg1 atualizado',
+      description: 'descrição do rpg1 atualizado',
+    };
+
+    rpgRepository.findOne.mockResolvedValueOnce(existingRpg);
+    rpgRepository.update.mockImplementationOnce(
+      async (id: string, rpg: Rpg) => {
+        return {
+          ...rpg,
+          ...dataToUpdate,
+      };
+    });
+
+    const updatedRpg = await rpgService.updateRpgInfo(rpgId, dataToUpdate);
+
+    expect(rpgRepository.findOne).toHaveBeenCalledWith({
+      where: { id: rpgId },
+    });
+    expect(rpgRepository.update).toHaveBeenCalledWith(
+      { id: rpgId },
+      {
+        ...dataToUpdate,
+      },
+    );
+    expect(updatedRpg).toEqual({
+      ...existingRpg,
+      ...dataToUpdate,
+    });
+  });
+
+  it('Should delete an Rpg', async () => {
+    const rpgId = 'e0510a77-1872-48ed-8f39-31b333ff4f3c';
+    const existingRpg: Rpg = {
+      id: rpgId,
+      author: 'autor1',
+      name: 'rpg1',
+      description: 'descrição do rpg1',
+      launchYear: 1998,
+      publisher: 'editora1',
+    };
+    rpgRepository.findOne.mockResolvedValueOnce(existingRpg);
+    rpgRepository.delete.mockImplementationOnce(async () => {});
+    await rpgService.deleteRpg(rpgId);
+    expect(rpgRepository.findOne).toHaveBeenCalledWith({
+      where: { id: rpgId },
+    });
+    expect(rpgRepository.delete).toHaveBeenCalledWith(rpgId);
+  });
 });

@@ -11,8 +11,8 @@ export class Rpg {
   @Column({ type: String })
   description: string;
 
-  @Column({ type: String })
-  launchYear: string;
+  @Column({ type: Number })
+  launchYear: number;
 
   @Column({ type: String })
   publisher: string;

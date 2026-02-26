@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignInDto } from './dto/signin.dto';
 import { AdminService } from 'src/admin/admin.service';
 import { JwtService } from '@nestjs/jwt';
@@ -9,7 +9,7 @@ export class AuthService {
   constructor(
     private readonly adminService: AdminService,
     private readonly jwtService: JwtService,
-    private readonly hashignService: HashingService,
+    private readonly hashingService: HashingService,
   ) {}
 
   async signIn(signInDto: SignInDto): Promise<{
@@ -17,13 +17,13 @@ export class AuthService {
   }> {
     const admin = await this.adminService.findOne(signInDto.email);
 
-    const match = await this.hashignService.compare(
+    const match = await this.hashingService.compare(
       signInDto.password,
       admin.password,
     );
 
     if (!match) {
-      throw new ForbiddenException();
+      throw new UnauthorizedException();
     }
 
     const token = await this.jwtService.signAsync({

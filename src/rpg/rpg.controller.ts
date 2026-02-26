@@ -1,7 +1,18 @@
-import { Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
-import { QueryPaginationDto } from 'src/common/pagination/dto/query_pagination.dto';
+import {
+import {
+  Controller,
+  Body,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';import { QueryPaginationDto } from 'src/common/pagination/dto/query_pagination.dto';
 import { RpgService } from './rpg.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
+import { CreateRpgDto } from './dto/create-rpg.dto';
+import { UpdateRpgDto } from './dto/update-rpg.dto';
 
 @Controller('rpg')
 export class RpgController {
@@ -33,17 +44,17 @@ export class RpgController {
 
   //protected routes
   @Post()
-  createRpgSystem() {
-    return this.rpgService.createRpg();
+  createRpgSystem(@Body() createRpgDto: CreateRpgDto) {
+    return this.rpgService.createRpg(createRpgDto);
   }
 
   @Patch(':id')
-  updateRpgSystem() {
-    return this.rpgService.updateRpgInfo();
+  updateRpgSystem(@Param('id') id: string, @Body() updateRpgDto: UpdateRpgDto) {
+    return this.rpgService.updateRpgInfo(id, updateRpgDto);
   }
 
   @Delete(':id')
-  deleteRpgSystem() {
-    return this.rpgService.deleteRpgInfo();
+  deleteRpgSystem(@Param('id') id: string) {
+    return this.rpgService.deleteRpg(id);
   }
 }

@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,12 +8,15 @@ import { Repository } from 'typeorm';
 import { Admin } from './entity/admin.entity';
 import { SignupDto } from './dto/signup.dto';
 import { HashingService } from 'src/common/hashing/hashing.service';
+import { PaginationService } from 'src/common/pagination/pagination.service';
+import { PaginatedDataDto } from 'src/common/pagination/dto/paginated-data.dto';
 
 @Injectable()
 export class AdminService {
   constructor(
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
+    private readonly paginationService: PaginationService,
     private readonly hashingService: HashingService,
   ) {}
 
@@ -33,10 +35,13 @@ export class AdminService {
       name: signUpDto.name,
     });
 
-    return savedUser;
+    return {
+      name: savedUser.name,
+      email: savedUser.email,
+    };
   }
 
-  async findByEmail(email: string) {
+  private async findByEmail(email: string) {
     return this.adminRepository.findOne({
       where: { email: email },
     });
@@ -49,10 +54,22 @@ export class AdminService {
       throw new NotFoundException('Usuário não cadastrado no sistema');
     }
 
-    if (!admin.isAllowed) {
-      throw new ForbiddenException('Usuário não permitido no sistema');
-    }
-
     return admin;
+  }
+
+  async findAll(paginationDto?: PaginatedDataDto<Admin>) {
+    const { limit = 10, offset = 0 } = paginationDto || {};
+    const admins = await this.adminRepository.find({
+      select: ['name', 'email'],
+      skip: offset,
+      take: limit,
+    });
+
+    const paginatedData = this.paginationService.returnPaginatedData<Admin>(
+      admins,
+      paginationDto,
+    );
+
+    return paginatedData;
   }
 }

@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { HashingService } from './hashing.service';
 
-class mockBycryptStrategy {
+class MockBycryptStrategy {
   hash = jest.fn();
   compare = jest.fn();
 }
@@ -14,7 +14,7 @@ describe('HashingService', () => {
       providers: [
         {
           provide: HashingService,
-          useClass: mockBycryptStrategy,
+          useClass: MockBycryptStrategy,
         },
       ],
     }).compile();
@@ -23,5 +23,5 @@ describe('HashingService', () => {
 
   it('Should be defined', () => {
     expect(hashingService).toBeDefined();
-  })
+  });
 });
