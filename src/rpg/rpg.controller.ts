@@ -1,5 +1,4 @@
 import {
-import {
   Controller,
   Body,
   Delete,
@@ -8,7 +7,8 @@ import {
   Patch,
   Post,
   Query,
-} from '@nestjs/common';import { QueryPaginationDto } from 'src/common/pagination/dto/query_pagination.dto';
+} from '@nestjs/common';
+import { QueryPaginationDto } from 'src/common/pagination/dto/query_pagination.dto';
 import { RpgService } from './rpg.service';
 import { Public } from 'src/common/decorators/is-public.decorator';
 import { CreateRpgDto } from './dto/create-rpg.dto';
